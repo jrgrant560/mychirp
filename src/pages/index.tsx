@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { api } from "~/utils/api";
 
-export default function Home() {
+export default function Home(props) {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   return (
@@ -47,6 +47,7 @@ export default function Home() {
           </p>
         </div>
       </main>
+      <div style={{ backgroundColor: "red" }}>WARNING: Sans font not being applied like tutorial! Tailwind --font-sans not defined?</div>
     </>
   );
 }
