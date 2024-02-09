@@ -7,7 +7,7 @@ export default authMiddleware({
     // publicRoutes: ["/"],
 
     // This function is called after the user is authenticated
-    afterAuth(auth, req, evt) {}
+    // afterAuth(auth, req, evt) {}
 });
 
 console.log("Clerk middleware is running!");
