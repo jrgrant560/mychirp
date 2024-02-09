@@ -28,7 +28,9 @@ export default function Home() {
         </div>
 
       </main>
-      <div style={{ backgroundColor: "red" }}>WARNING: Sans font not being applied like tutorial! Tailwind --font-sans not defined?</div>
+      {/* <div style={{ backgroundColor: "gold" }}>WARNING: Redirecting to signin page when user is not signed in again; need to troubleshoot</div> */}
+
+      <div style={{ backgroundColor: "red" }}>ISSUE: Sans font not being applied! Tailwind --font-sans not defined?</div>
     </>
   );
 }
