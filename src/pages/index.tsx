@@ -1,12 +1,15 @@
 import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
-
 import { api } from "~/utils/api";
+
+// this file runs on the client end
 
 export default function Home() {
 
   const user = useUser();
+
+  const {data} = api.posts.getAll.useQuery();
 
   return (
     <>
@@ -24,11 +27,16 @@ export default function Home() {
             {!!user.isSignedIn && <SignOutButton />}
           </div>
 
+          <div>
+            {data?.map((post) => (
+              <div key={post.id}  >{post.content}</div>
+            ))}
+          </div>
+
           <UserButton afterSignOutUrl="/" />
         </div>
 
       </main>
-      {/* <div style={{ backgroundColor: "gold" }}>WARNING: Redirecting to signin page when user is not signed in again; need to troubleshoot</div> */}
 
       <div style={{ backgroundColor: "red" }}>ISSUE: Sans font not being applied! Tailwind --font-sans not defined?</div>
     </>

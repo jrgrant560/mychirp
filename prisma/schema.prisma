@@ -1,6 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// to run studio view: "npx prisma studio"
+
 generator client {
     provider        = "prisma-client-js"
     previewFeatures = ["driverAdapters"]
@@ -15,10 +17,11 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+    id        Int      @id @default(autoincrement()) //Theo used "cuid()" instead of "autoincrement()" in the tutorial
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 
-    @@index([name])
+    content String @db.VarChar(255)
+    authorId  String
+
+    @@index([authorId])
 }
