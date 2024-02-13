@@ -9,6 +9,8 @@ const CreatePostWizard = () => {
 
   if (!user) return null;
 
+  // console.log(user);
+
   return (
     <div className="flex gap-3 w-full">
       <img src={user.imageUrl} alt="user profile image" className="w-14 h-14 rounded-full"/>
@@ -16,6 +18,9 @@ const CreatePostWizard = () => {
     </div>
   )
 }
+
+// "don't make new files until you know something is going to be reused somewhwere else; that's how you end up with a bunch of files that are never used" - Theo
+// const PostView = () => {}
 
 // this file runs on the client end
 
@@ -49,7 +54,7 @@ export default function Home() {
 
           {/* list of all past posts */}
           <div className="flex flex-col">
-            {data?.map((post) => (
+            {data?.map(({post, author}) => (
               <div key={post.id} className="p-8 border-b border-slate-400" >{post.content}</div>
             ))}
           </div>
