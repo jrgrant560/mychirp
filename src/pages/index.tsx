@@ -3,13 +3,31 @@ import Head from "next/head";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
+
+const CreatePostWizard = () => {
+  const { user } = useUser();
+
+  if (!user) return null;
+
+  return (
+    <div className="flex gap-3 w-full">
+      <img src={user.imageUrl} alt="user profile image" className="w-14 h-14 rounded-full"/>
+      <input placeholder="What's on your mind?" className="bg-transparent grow outline-none" />
+    </div>
+  )
+}
+
 // this file runs on the client end
 
 export default function Home() {
 
   const user = useUser();
 
-  const {data} = api.posts.getAll.useQuery();
+  const { data, isLoading } = api.posts.getAll.useQuery();
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!data) return <div>No data. Something went wrong!</div>;
 
   return (
     <>
@@ -19,20 +37,24 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex justify-center h-screen">
-          <section className="h-full w-full md:max-w-2xl border-x border-slate-400">
+        <section className="h-full w-full md:max-w-2xl border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
             {/* Theo's tutorial methods for signin. It looks like Clerk might have updated Sign-in features since then? */}
-            {!user.isSignedIn && <div className="flex justify-center"><SignInButton /></div>}
+            {!user.isSignedIn && <div className="flex justify-center">
+              <SignInButton />
+            </div>}
+            {user.isSignedIn && <CreatePostWizard />}
             {!!user.isSignedIn && <SignOutButton />}
           </div>
 
-          <div>
+          {/* list of all past posts */}
+          <div className="flex flex-col">
             {data?.map((post) => (
-              <div key={post.id}  >{post.content}</div>
+              <div key={post.id} className="p-8 border-b border-slate-400" >{post.content}</div>
             ))}
           </div>
-          </section>
-          {/* <UserButton afterSignOutUrl="/" /> */}
+        </section>
+        {/* <UserButton afterSignOutUrl="/" /> */}
 
       </main>
 
