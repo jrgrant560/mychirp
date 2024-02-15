@@ -1,9 +1,9 @@
 import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 
-
+// CreatePostWizard component: input field for creating a new post
 const CreatePostWizard = () => {
   const { user } = useUser();
 
@@ -13,14 +13,35 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex gap-3 w-full">
-      <img src={user.imageUrl} alt="user profile image" className="w-14 h-14 rounded-full"/>
+      <img src={user.imageUrl} alt="user profile image" className="w-14 h-14 rounded-full" />
       <input placeholder="What's on your mind?" className="bg-transparent grow outline-none" />
     </div>
   )
 }
 
 // "don't make new files until you know something is going to be reused somewhwere else; that's how you end up with a bunch of files that are never used" - Theo
-// const PostView = () => {}
+
+
+type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+
+// PostView component: takes in a post and an author, and renders post content
+const PostView = (props: PostWithUser) => {
+
+  const {post, author} = props;
+
+  return (
+    <div key={post.id} className="flex gap-3 p-4 border-b border-slate-400" >
+      <img src={author.imageUrl} className="w-14 h-14 rounded-full" />
+      <div className="flex flex-col">
+      <div className="flex text-slate-400">
+        <span>{`@${author.username}`}</span>
+      </div>
+        <span>{post.content}</span>
+      </div>
+      </div>
+  )
+
+}
 
 // this file runs on the client end
 
@@ -53,10 +74,10 @@ export default function Home() {
           </div>
 
           {/* list of all past posts */}
+          {/* maps all posts onto a PostView component */}
           <div className="flex flex-col">
-            {data?.map(({post, author}) => (
-              <div key={post.id} className="p-8 border-b border-slate-400" >{post.content}</div>
-            ))}
+            {data?.map((fullPost) => (
+              <PostView {...fullPost} key={fullPost.post.id} />))}
           </div>
         </section>
         {/* <UserButton afterSignOutUrl="/" /> */}
