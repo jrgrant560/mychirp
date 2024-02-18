@@ -1,3 +1,17 @@
+As a User, I want to log in to the app.
+As a User, I want to post an emoji.
+As a User, I want to see all past emojis posted.
+
+As an Engineer, I want the base T3 app served locally.
+As an Engineer, I want the base T3 app deployed on Vercel.
+As an Engineer, I want to link Planetscale as my DB.
+As an Engineer, I want Prisma to manage my database connection.
+As an Engineer...
+
+
+
+
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
