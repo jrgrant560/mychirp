@@ -86,7 +86,7 @@ const Feed = () => {
     /* list of all past posts */
     /* maps all posts onto a PostView component */
     <div className="flex flex-col">
-      {data?.map((fullPost) => (
+      {data.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />))}
     </div>
   )
