@@ -54,7 +54,7 @@ export const postsRouter = createTRPCRouter({
       z.object({ content: z.string().emoji().min(1).max(280) }) //using trpc's Zod to validate input type is correct
     )
     .mutation(async ({ ctx, input }) => {
-      const authorId = ctx.currentUser.id;
+      const authorId = ctx.currentUser.userId!;
 
       const post = await ctx.db.post.create({
         data: {

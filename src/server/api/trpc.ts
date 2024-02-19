@@ -6,7 +6,7 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { auth, getAuth } from "@clerk/nextjs/server";
+import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
@@ -22,17 +22,23 @@ import { db } from "~/server/db";
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
+  // export const createTRPCContext = async (opts: { headers: Headers }) => {
 
   const {req} = opts;
 
-  const user = auth(); // tells us if the same user is signed in or not, via Clerk
-
+  const user = getAuth(req); // tells us if the same user is signed in or not, via Clerk
+  // const user = await currentUser();
   
 
   return {
     db,
     currentUser: user,
   };
+  // return {
+  //   db,
+  //   currentUser: user,
+  //   ...opts,
+  // };
 };
 
 /**
