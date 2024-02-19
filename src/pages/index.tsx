@@ -5,6 +5,7 @@ import { RouterOutputs, api } from "~/utils/api";
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
+import { LoadingPage } from "~/components/loading";
 
 dayjs.extend(relativeTime);
 
@@ -61,17 +62,35 @@ const PostView = (props: PostWithUser) => {
 
 }
 
-// this file runs on the client end
 
-export default function Home() {
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
 
-  const user = useUser();
-
-  const { data, isLoading } = api.posts.getAll.useQuery();
-
-  if (isLoading) return <div>Loading...</div>;
+  if (postsLoading) return <LoadingPage />;
 
   if (!data) return <div>No data. Something went wrong!</div>;
+
+  return (
+    /* list of all past posts */
+    /* maps all posts onto a PostView component */
+    <div className="flex flex-col">
+      {data?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />))}
+    </div>
+  )
+}
+
+// this file runs on the client end
+export default function Home() {
+
+  const { user, isLoaded: userLoaded, isSignedIn } = useUser();
+
+  // start fetching posts
+  api.posts.getAll.useQuery();
+
+
+  if (!userLoaded) return <div />; //return empty div if user is not loaded
+
 
   return (
     <>
@@ -84,19 +103,14 @@ export default function Home() {
         <section className="h-full w-full md:max-w-2xl border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
             {/* Theo's tutorial methods for signin. It looks like Clerk might have updated Sign-in features since then? */}
-            {!user.isSignedIn && <div className="flex justify-center">
+            {!isSignedIn && <div className="flex justify-center">
               <SignInButton />
             </div>}
-            {user.isSignedIn && <CreatePostWizard />}
-            {!!user.isSignedIn && <SignOutButton />}
+            {isSignedIn && <CreatePostWizard />}
+            {!!isSignedIn && <SignOutButton />}
           </div>
+          <Feed />
 
-          {/* list of all past posts */}
-          {/* maps all posts onto a PostView component */}
-          <div className="flex flex-col">
-            {data?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />))}
-          </div>
         </section>
         {/* <UserButton afterSignOutUrl="/" /> */}
 
