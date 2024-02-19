@@ -6,12 +6,17 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { LoadingPage } from "~/components/loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 // CreatePostWizard component: input field for creating a new post
 const CreatePostWizard = () => {
   const { user } = useUser();
+
+  const [input, setInput] = useState("");
+
+  const { mutate } = api.posts.create.useMutation();
 
   if (!user) return null;
 
@@ -26,7 +31,14 @@ const CreatePostWizard = () => {
         width={56}
         height={56}
       />
-      <input placeholder="What's on your mind?" className="bg-transparent grow outline-none" />
+      <input
+        placeholder="What's on your mind?"
+        className="bg-transparent grow outline-none"
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button onClick={() => mutate({ content: input })} className="bg-blue-500 text-white px-4 py-2 rounded-md">Post</button>
     </div>
   )
 }
