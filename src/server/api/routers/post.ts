@@ -40,7 +40,7 @@ export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.db.post.findMany({
       take: 100,
-      orderBy: [{createdAt: "desc"}],
+      orderBy: [{ createdAt: "desc" }],
     });
 
     // array of users
@@ -67,14 +67,19 @@ export const postsRouter = createTRPCRouter({
   }),
 
   create: privateProcedure
+    //using trpc's Zod to validate input type is correct
     .input(
-      z.object({ content: z.string().emoji().min(1).max(280) }) //using trpc's Zod to validate input type is correct
+      z.object({
+        content: z.string()
+          .emoji("Only emojis are allowed bro! 👎") //custom error message if input is not correct
+          .min(1).max(280)
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const authorId = ctx.currentUser.userId!;
 
       // ratelimit the user
-      const {success} = await ratelimit.limit(authorId);
+      const { success } = await ratelimit.limit(authorId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "You are posting too frequently" });
 
       const post = await ctx.db.post.create({
