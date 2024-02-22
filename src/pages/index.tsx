@@ -54,13 +54,30 @@ const CreatePostWizard = () => {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+          }
+
+        }}
         disabled={isPosting}
       />
-      {input !== "" && (
-        <button onClick={() => mutate({ content: input })} className="bg-blue-500 text-white px-4 py-2 rounded-md" disabled={isPosting}>Post</button>
+      {input !== "" && !isPosting && (
+        <button
+          onClick={() => mutate({ content: input })}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md">
+          Post
+        </button>
       )}
 
-      {isPosting && <LoadingSpinner />}
+      {isPosting && (
+        <div className="flex justify-center items-center">
+          <LoadingSpinner size={20} />
+        </div>)}
     </div>
   )
 }
@@ -141,7 +158,7 @@ export default function Home() {
               <SignInButton />
             </div>}
             {isSignedIn && <CreatePostWizard />}
-            {!!isSignedIn && <SignOutButton />}
+            {/* {!!isSignedIn && <SignOutButton />} */}
           </div>
           <Feed />
 
