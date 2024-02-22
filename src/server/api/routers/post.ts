@@ -80,7 +80,10 @@ export const postsRouter = createTRPCRouter({
 
       // ratelimit the user
       const { success } = await ratelimit.limit(authorId);
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "You are posting too frequently" });
+      if (!success) {
+        // TASK: need Zod error here to be sent to toast, so the user knows they are posting too frequently
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "You are posting too frequently" })
+      };
 
       const post = await ctx.db.post.create({
         data: {

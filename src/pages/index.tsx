@@ -9,16 +9,21 @@ import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+
 dayjs.extend(relativeTime);
 
 // CreatePostWizard component: input field for creating a new post
 const CreatePostWizard = () => {
   const { user } = useUser();
 
-  const [input, setInput] = useState("");
+  //TASK: have "React Hook Form" manage input state
+  const [input, setInput] = useState(""); //ISSUE: this can cause key appearance in the input field to be delayed, since it is being re-rendered on every key press
 
   const ctx = api.useUtils();
 
+  // this function posts the content
+  // the api is called and all validation & rendering is performed on the server
+  // TASK: input validation needs to be performed on the client side instead of the server; Theo recommends "Zod & React hook Form"
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
@@ -30,6 +35,8 @@ const CreatePostWizard = () => {
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {
+        // ISSUE: User does not know why the post failed, since the error message is not being displayed
+        // TASK: Need another else statement to handle the error case where the user is posting too frequently, and send a toast message
         toast.error("Failed to post! Please try again later.");
       }
     }
