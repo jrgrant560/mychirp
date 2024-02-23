@@ -32,7 +32,7 @@ const CreatePostWizard = () => {
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
 
-      if (errorMessage && errorMessage[0]) {
+      if (errorMessage && errorMessage[0]) { // <-- causing deploy build to fail
         toast.error(errorMessage[0]);
       } else {
         // ISSUE: User does not know why the post failed, since the error message is not being displayed
@@ -101,6 +101,7 @@ const PostView = (props: PostWithUser) => {
 
   return (
     <div key={post.id} className="flex gap-3 p-4 border-b border-slate-400" >
+      {/* TASK: clicking image or username goes to profile page */}
       <Image
         src={author.imageUrl}
         alt={`@${author.username}'s Profile Image`}
@@ -110,8 +111,10 @@ const PostView = (props: PostWithUser) => {
       />
       <div className="flex flex-col">
         <div className="flex text-slate-400 gap-1">
-          <span>{`@${author.username}`}</span>
-          <span className="font-thin">{`${dayjs(post.createdAt).fromNow()}`}</span>
+          {/* the Link component prevents a full browser refresh */}
+          <Link href={`/@${author.username}`}><span>{`@${author.username}`}</span></Link> 
+          <Link href={`/post/${post.id}`}><span className="font-thin">{` · ${dayjs(post.createdAt).fromNow()}`}</span></Link>
+
         </div>
         <span className="text-xl">{post.content}</span>
       </div>
@@ -139,6 +142,7 @@ const Feed = () => {
 }
 
 // this file runs on the client end
+// const Home: NextPage = () => {} this method from the tutorial is not working
 export default function Home() {
 
   const { user, isLoaded: userLoaded, isSignedIn } = useUser();
@@ -161,12 +165,19 @@ export default function Home() {
         <section className="h-full w-full md:max-w-2xl border-x border-slate-400">
           <div className="border-b border-slate-400 p-4 flex">
             {/* Theo's tutorial methods for signin. It looks like Clerk might have updated Sign-in features since then? */}
-            {!isSignedIn && <div className="flex justify-center">
-              <SignInButton />
-            </div>}
-            {isSignedIn && <CreatePostWizard />}
-            {/* {!!isSignedIn && <SignOutButton />} */}
+            {!isSignedIn &&
+              <div className="flex justify-center">
+                <SignInButton />
+              </div>}
+
+            {isSignedIn &&
+              <CreatePostWizard />
+            }
+
+            {/* {!!isSignedIn && <div className="bg-red-800"> <SignOutButton /> </div>} */}
+
           </div>
+
           <Feed />
 
         </section>
