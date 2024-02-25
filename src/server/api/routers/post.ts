@@ -1,4 +1,3 @@
-import type { User } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -6,13 +5,12 @@ import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/ap
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
-const filterUserForClient = (user: User) => {
 
-  return { id: user.id, username: user.username, imageUrl: user.imageUrl };
-}
+//NOTE: there are no type definitions in this file. All typechecks are performed by the TRPC validators, which enforce typechecks through strict validation and inference.
 
-// Create a new ratelimiter, that allows 2 requests per 1 minute
+// Ratelimiter that allows 2 requests per 1 minute
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(2, "1 m"),
