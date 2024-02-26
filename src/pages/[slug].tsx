@@ -1,24 +1,25 @@
-import { GetStaticProps, type NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 
 
 //this page catches on every route that is not defined in the pages folder??
 
-const ProfilePage: NextPage = () => {
 
-  const { data, isLoading } = api.profile.getUserByUsername.useQuery({ username: "jrgrant560" });
+const ProfilePage: NextPage<{ username: string }> = ({username}) => {
 
-  if (isLoading) return <div>Loading...</div>
+  const { data } = api.profile.getUserByUsername.useQuery({ username: "jrgrant560" });
+
+  // if (isLoading) return <div>Loading...</div>
 
   if (!data) return <div>No data. Something went wrong!</div>
 
-  return (
 
+  return (
 
     <>
       <Head>
-        <title>Profile</title>
+        <title>{data.username}</title>
       </Head>
       <main className="flex justify-center h-screen">
 
@@ -42,13 +43,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: {db, currentUser: null}, 
+    ctx: {db, currentUser: null}, //currentUser is null because we are not using authentication?
     transformer: superjson,
   });
 
   const slug = context.params?.slug;
-
-  console.log(context);
 
   if (typeof slug !== "string") throw new Error("no slug");
 
@@ -59,6 +58,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       trpcState: helpers.dehydrate(),
+      username,
     },
   };
 

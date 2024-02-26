@@ -169,8 +169,8 @@ export default function Home() {
               <CreatePostWizard />
             }
 
-            {/* {!!isSignedIn && <div className="bg-red-800"> <SignOutButton /> </div>} */}
-
+           {!!isSignedIn && <div className="bg-red-800"> <SignOutButton /> </div>}
+           
           </div>
 
           <Feed />
