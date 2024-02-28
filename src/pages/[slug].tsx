@@ -20,16 +20,20 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username}</title>
       </Head>
       <PageLayout>
-        <div className="h-48 border-b border-slate-400 bg-slate-600">
+        <div className="relative h-36 bg-slate-600">
           <Image
             src={data.imageUrl}
             alt={`${data.username}'s profile pic`}
-            width={64}
-            height={64}
-            className="-mb-8"
+            width={128}
+            height={128}
+            className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
+
+            // style={{ width: "100%", height: "auto", }} this would override the width and height properties of the Image component, allowing for responsive images
           />
-          <div>{data.username}</div>
         </div>
+        <div className="h-[64px]"></div>
+        <div className="p-4 text-2xl font-bold">{`@${data.username ?? ""}`}</div>
+        <div className="border-b w-full border-slate-400"></div>
       </PageLayout>
     </>
   );
