@@ -4,18 +4,16 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import Head from "next/head";
-import Link from "next/link";
-import { RouterOutputs, api } from "~/utils/api";
+
+import { api } from "~/utils/api";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { PageLayout } from "~/components/layout";
-
-dayjs.extend(relativeTime);
+import { PostView } from "~/components/postView";
 
 // CreatePostWizard component: input field for creating a new post
 const CreatePostWizard = () => {
@@ -95,40 +93,9 @@ const CreatePostWizard = () => {
   );
 };
 
-// "don't make new files until you know something is going to be reused somewhwere else; that's how you end up with a bunch of files that are never used" - Theo
+// Theo tip: "don't make new files until you know something is going to be reused somewhere else; that's how you end up with a bunch of files that are never used"
 
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
-// PostView component: takes in a post and an author, and renders post content
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-
-  return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      {/* TASK: clicking image or username goes to profile page */}
-      <Image
-        src={author.imageUrl}
-        alt={`@${author.username}'s Profile Image`}
-        className="h-14 w-14 rounded-full"
-        width={56}
-        height={56}
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-slate-400">
-          {/* the Link component prevents a full browser refresh */}
-          <Link href={`/@${author.username}`}>
-            <span>{`@${author.username}`}</span>
-          </Link>
-          <Link href={`/post/${post.id}`}>
-            <span className="font-thin">{` · ${dayjs(post.createdAt).fromNow()}`}</span>
-          </Link>
-        </div>
-
-        <span className="text-xl">{post.content}</span>
-      </div>
-    </div>
-  );
-};
 
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
@@ -182,10 +149,6 @@ export default function Home() {
 
         {/* <UserButton afterSignOutUrl="/" /> */}
       </PageLayout>
-
-      {/* <div style={{ backgroundColor: "red", marginTop: "300px" }}>
-        ISSUE: Sans font not being applied! Tailwind --font-sans not defined?
-      </div> */}
     </>
   );
 }

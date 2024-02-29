@@ -11,8 +11,6 @@ export default function SinglePostPage() {
         <div>Single Post View</div>
 
       </main>
-
-      <div style={{ backgroundColor: "red", marginTop: "300px" }}>ISSUE: Sans font not being applied! Tailwind --font-sans not defined?</div>
     </>
   );
 }
