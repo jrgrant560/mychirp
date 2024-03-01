@@ -61,7 +61,7 @@ import { db } from "~/server/db";
 import superjson from "superjson";
 import { PageLayout } from "~/components/layout";
 import { LoadingPage } from "~/components/loading";
-import { PostView } from "~/components/postView";
+import { PostView } from "~/components/postview";
 
 //this pre-hydrates the page with user data, so no loading state is needed when the user visits the Profile page
 export const getStaticProps: GetStaticProps = async (context) => {
