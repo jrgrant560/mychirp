@@ -10,10 +10,9 @@ import {
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
-import type { Post } from "@prisma/client";
+import type { PostB } from "@prisma/client";
 
-
-const addUserDataToPosts = async (posts: Post[]) => {
+const addUserDataToPosts = async (posts: PostB[]) => {
   // array of users
   const users = (
     await clerkClient.users.getUserList({
@@ -59,16 +58,25 @@ const ratelimit = new Ratelimit({
 // this file runs on the server end
 
 export const postsRouter = createTRPCRouter({
-  // hello: publicProcedure
-  //   .input(z.object({ text: z.string() }))
-  //   .query(({ input }) => {
-  //     return {
-  //       greeting: `Hello ${input.text}`,
-  //     };
-  //   }),
+
+  getById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.db.postB.findUnique({ //NOTE: I am using the "postB" table, since the regular "post" table use Int id's
+        where: { id: input.id },
+      });
+
+      if (!post) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return (await addUserDataToPosts([post]))[0];
+    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.db.post.findMany({
+    const posts = await ctx.db.postB.findMany({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
     });
@@ -83,14 +91,15 @@ export const postsRouter = createTRPCRouter({
       }),
     )
     .query(({ ctx, input }) =>
-      ctx.db.post.findMany({
-        where: {
-          authorId: input.userId,
-        },
-        take: 100,
-        orderBy: [{ createdAt: "desc" }],
-      })
-      .then(addUserDataToPosts),
+      ctx.db.postB
+        .findMany({
+          where: {
+            authorId: input.userId,
+          },
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
+        })
+        .then(addUserDataToPosts),
     ),
 
   create: privateProcedure
@@ -105,7 +114,7 @@ export const postsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const authorId = ctx.currentUser.userId!;
+      const authorId = ctx.userId!;
 
       // ratelimit the user
       const { success } = await ratelimit.limit(authorId);
@@ -117,7 +126,7 @@ export const postsRouter = createTRPCRouter({
         });
       }
 
-      const post = await ctx.db.post.create({
+      const post = await ctx.db.postB.create({
         data: {
           authorId,
           content: input.content,

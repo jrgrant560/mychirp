@@ -25,14 +25,16 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // export const createTRPCContext = async (opts: { headers: Headers }) => {
 
   const {req} = opts;
+  const sesh = getAuth(req);
 
-  const user = getAuth(req); // tells us if the same user is signed in or not, via Clerk
+  //const user = getAuth(req); // tells us if the same user is signed in or not, via Clerk
   // const user = await currentUser();
   
+  const userId = sesh.userId;
 
   return {
     db,
-    currentUser: user,
+    userId,
   };
   // return {
   //   db,
@@ -87,7 +89,7 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.currentUser) {
+  if (!ctx.userId) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "You must be logged in to do that",
@@ -95,7 +97,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   }
 
   return next({
-    ctx: { currentUser: ctx.currentUser },
+    ctx: { currentUser: ctx.userId },
   });
 });
 

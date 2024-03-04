@@ -3,6 +3,11 @@ import Image from "next/image";
 import Head from "next/head";
 import { api } from "~/utils/api";
 
+import { PageLayout } from "~/components/layout";
+import { LoadingPage } from "~/components/loading";
+import { PostView } from "~/components/postview";
+import { generateSSHelper } from "~/server/helpers/createServerSideHelpers";
+
 const ProfileFeed = (props: {userId: string}) => {
 
   const {data, isLoading} = api.posts.getPostsByUserId.useQuery({userId: props.userId});
@@ -55,21 +60,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   );
 };
 
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "~/server/api/root";
-import { db } from "~/server/db";
-import superjson from "superjson";
-import { PageLayout } from "~/components/layout";
-import { LoadingPage } from "~/components/loading";
-import { PostView } from "~/components/postview";
 
 //this pre-hydrates the page with user data, so no loading state is needed when the user visits the Profile page
 export const getStaticProps: GetStaticProps = async (context) => {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: { db, currentUser: null }, //currentUser is null because we are not using authentication?
-    transformer: superjson,
-  });
+ const ssHelper = generateSSHelper();
 
   const slug = context.params?.slug;
 
@@ -77,11 +71,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const username = slug.replace("@", "");
 
-  await helpers.profile.getUserByUsername.prefetch({ username });
+  await ssHelper.profile.getUserByUsername.prefetch({ username });
 
   return {
     props: {
-      trpcState: helpers.dehydrate(),
+      trpcState: ssHelper.dehydrate(),
       username,
     },
   };

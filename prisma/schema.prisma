@@ -17,7 +17,17 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement()) //Theo used "cuid()" instead of "autoincrement()" in the tutorial
+    id        Int      @id @default(autoincrement()) //I used 'Int' id's instead of string when setting up...
+    createdAt DateTime @default(now())
+
+    content String @db.VarChar(255)
+    authorId  String
+
+    @@index([authorId])
+}
+
+model PostB {
+    id        String      @id @default(cuid()) //Using String id's here on new table
     createdAt DateTime @default(now())
 
     content String @db.VarChar(255)
