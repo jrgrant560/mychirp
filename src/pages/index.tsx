@@ -18,7 +18,7 @@ const CreatePostWizard = () => {
   const { user } = useUser();
 
   //TASK: have "React Hook Form" manage input state
-  const [input, setInput] = useState(""); //ISSUE: this can cause key appearance in the input field to be delayed, since it is being re-rendered on every key press
+  const [input, setInput] = useState(""); //ISSUE: this can cause character appearance in the input field to be delayed, since it is being re-rendered on every key press
 
   const ctx = api.useUtils();
 
