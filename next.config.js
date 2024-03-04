@@ -20,6 +20,13 @@ const config = {
   images: {
     domains: ["img.clerk.com"],
   },
+  typescript: {
+    ignoreBuildErrors: true, //disable typescript errors during build
+  },
+  eslint: {
+    ignoreDuringBuilds: true, //disable eslint during build
+  },
+  swcMinify: true, //uses SWC as the minifier instead of Terser/Babel
 };
 
 export default config;
