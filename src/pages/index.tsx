@@ -1,12 +1,10 @@
 import {
   SignInButton,
   SignOutButton,
-  UserButton,
   useUser,
 } from "@clerk/nextjs";
 
 import { api } from "~/utils/api";
-import dayjs from "dayjs";
 
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
@@ -35,7 +33,7 @@ const CreatePostWizard = () => {
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
 
-      if (errorMessage && errorMessage[0]) {
+      if (errorMessage?.[0]) {
         // <-- causing deploy build to fail
         toast.error(errorMessage[0]);
       } else {
