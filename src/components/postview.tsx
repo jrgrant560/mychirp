@@ -16,7 +16,7 @@ export const PostView = (props: PostWithUser) => {
 
   return (
     <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      {/* TASK: clicking image or username goes to profile page */}
+      {/* TASK: go to profile page by clicking profile image also; wrap inside the same Link component as username */}
       <Image
         src={author.imageUrl}
         alt={`@${author.username}'s Profile Image`}
@@ -26,11 +26,13 @@ export const PostView = (props: PostWithUser) => {
       />
       <div className="flex flex-col">
         <div className="flex gap-1 text-slate-400">
-          {/* the Link component prevents a full browser refresh */}
-          <Link href={`/@${author.username}`}>
+          {/* the Link component routes without performing a full browser refresh */}
+          <Link href={`/@${author.username}`}> {/* routes to profile page */}
             <span>{`@${author.username}`}</span>
           </Link>
-          <Link href={`/post/${post.id}`}>
+          
+          {/* TASK: go to single post page by clicking entire post item */}
+          <Link href={`/post/${post.id}`}> {/* routes to single post page */}
             <span className="font-thin">{` · ${dayjs(post.createdAt).fromNow()}`}</span>
           </Link>
         </div>
